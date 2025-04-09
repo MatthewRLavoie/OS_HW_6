@@ -15,6 +15,8 @@ Results - Some advancment. Higher chance of success. The actual time depends on 
 
 L2 cache reference
 
+
+
 Results-
 
 Mutex lock/unlock
