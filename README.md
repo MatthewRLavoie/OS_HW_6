@@ -51,8 +51,11 @@ Results-
 2. 
 Q1. Copy-On-Write (COW) is a memory optimization technique used during the fork() system call to reduce latency when creating a new process. Instead of immediately duplicating all memory pages from the parent process to the child, COW allows both processes to initially share the same physical memory pages marked as read-only. If either process attempts to write to a shared page, the operating system creates a separate copy of that page for the writing process—a mechanism known as "copy-on-write." This approach significantly improves performance because it avoids unnecessary copying of memory, especially when the child process does not modify most of the parent's memory or immediately calls exec() to load a new program. By deferring memory duplication until it’s absolutely necessary, COW makes fork() much faster and more efficient, especially for processes with large address spaces.
 
-Q2. Process* fork_process(Process* parent) {
+Q2. 
+
+    Process* fork_process(Process* parent) {
     Process* child = create_new_process();
+    
 
     for each page in parent->address_space {
         // Mark both parent and child page tables as read-only and COW
@@ -69,9 +72,9 @@ Q2. Process* fork_process(Process* parent) {
     }
 
     return child;
-}
+    }
 
-void page_fault_handler(Address addr, Process* proc) {
+    void page_fault_handler(Address addr, Process* proc) {
     PageTableEntry* entry = proc->page_table[addr];
 
     if (entry.flags contains COW) {
@@ -91,9 +94,9 @@ void page_fault_handler(Address addr, Process* proc) {
     } else {
         // Handle non-COW faults (not shown here)
     }
-}
+    }
 
-void free_process_memory(Process* proc) {
+    void free_process_memory(Process* proc) {
     for each page in proc->page_table {
         PhysicalPage* phys = page.physical_page;
         decrement_refcount(phys);
@@ -104,5 +107,5 @@ void free_process_memory(Process* proc) {
 
         unmap_page(proc->page_table, page.vaddr);
     }
-}
+    }
 
